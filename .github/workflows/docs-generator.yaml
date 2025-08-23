@@ -20,16 +20,22 @@ jobs:
         curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
         source ~/.cargo/env
 
+    - name: Make scripts executable
+      run: |
+        chmod +x docs-generation/create-docs-pr.sh
+        chmod +x docs-generation/read-pr.sh
+        chmod +x docs-generation/update-docs.sh
+
     - name: Generate PR contents file
-      run: ./docs-generation/read-pr.sh ${{ inputs.pr_number }}
+      run: bash docs-generation/read-pr.sh ${{ inputs.pr_number }}
 
     # For testing purposes, we're building from source
     - name: Update docs
-      run: ./docs-generation/update-docs.sh
+      run: bash docs-generation/update-docs.sh
 
     - name: Create PR
       if: success()
-      run: ./docs-generation/create-docs-pr.sh ${{ inputs.pr_number }}
+      run: bash docs-generation/create-docs-pr.sh ${{ inputs.pr_number }}
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
